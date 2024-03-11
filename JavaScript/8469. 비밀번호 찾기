@@ -1,0 +1,30 @@
+let id1 = 's a d k f a s c a s d' //s a d k f a s c
+let id2 = 's a p o a c a s o' //s a p o a c
+
+function solution1 (id1) {
+    let ans = '';
+    for(let i = 0; i < id1.length; i++) {
+        if(id1[i] == 'c') {
+            ans += id1[i];
+            break;
+        }
+        ans += id1[i];
+    }
+    console.log("비밀번호:", ans);
+}
+
+solution1(id1)
+
+function solution2 (id2) {
+    let ans = '';
+    for(let i = 0; i < id2.length; i++) {
+        if(id2[i] == 'c') {
+            ans += id2[i];
+            break;
+        }
+        ans += id2[i];
+    }
+    console.log("비밀번호:", ans);
+}
+
+solution1(id2)
