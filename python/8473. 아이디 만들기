@@ -1,0 +1,15 @@
+# 현우는 시뮬레이션 게임을 하려고 합니다. 
+# 다운로드를 끝내고 게임에 접속하니 아이디를 만들라는 창이 등장했습니다.
+
+# 아이디는 영어로만 쓸 수 있고, 20글자를 넘어가면 안 됩니다.
+# 현우가 정한 아이디의 생성 가능여부를 출력합니다.
+
+# 사용할 수 있는 아이디라면 "P"라고 출력하고, 사용할 수 없다면 "I"라고 출력합니다.
+# 예제 입력1 = abcdefghijklmnopqrstuvwxyz / 예제 출력1 = I
+# 예제 입력2 = ABC / 예제 출력2 = P
+
+# -*- coding: utf-8 -*-
+import sys
+
+pass_id = sys.stdin.readline().strip()
+print('I' if len(pass_id) >= 20 else 'P')
