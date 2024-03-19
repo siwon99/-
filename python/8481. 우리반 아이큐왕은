@@ -1,0 +1,32 @@
+# 신화중학교 3학년 2반 학생들은 며칠 전 IQ검사를 치루었고,
+# 드디어 오늘 결과가 나왔습니다. 
+
+# 학생들은 반에서 IQ가 높은 학생이 누구인지 궁금해졌습니다. 
+# 학생들의 이름과 IQ가 입력될 때, 
+
+# IQ가 높은 순서대로 상위 3명의 이름을 출력하는 프로그램을 작성하세요. 
+# IQ가 같을 경우에는 먼저 입력된 학생의 이름을 출력합니다.
+
+# 예제 입력1
+4
+jung 51
+dong 160
+back 120
+pang 89
+
+# 예제 출력1
+dong
+back
+pang
+
+import sys
+
+n = int(sys.stdin.readline())
+students = []
+for i in range(n):
+    name, iq = input().split()
+    students.append((name, int(iq)))
+students = sorted(students, key=lambda x: x[1], reverse=True)
+
+for i in range(3):
+    print(students[i][0])
