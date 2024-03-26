@@ -1,0 +1,50 @@
+// const input1 = [5, 6]
+// const input2 = [[1, 'A'], [2, 'B'], [5, 'B'], [1, 'C'], [2, 'A'], [2, 'B']]
+
+const input1 = [3, 3]
+const input2 = [[1, 'A'], [2, 'B'], [3, 'C']]
+
+// const n = input[0].split(' '); // 칸수
+// const k = input[1].split(' '); // 돌리는 횟수
+
+let n = input1[0]
+let k = input1[1]
+let wheel = Array.from({ length: n }, (_, index) => []);
+let cur_idx = 0;
+let output = [];
+
+for (let i = 0; i < n + 1; i++) {
+  let cur_num = input2[i][0];
+  let cur_str = input2[i][1];
+  cur_idx += cur_num;
+
+  if( cur_idx > input2.length - 1) {
+    cur_idx = cur_idx % wheel.length;
+  }
+  
+  if(wheel[cur_idx] == cur_str) {
+    continue
+  } else if (wheel[cur_idx].length == 0) {
+    wheel[cur_idx] = cur_str;
+  } else {
+    console.log('!');
+    break;
+  }
+}
+  
+for(let i = 0; i < wheel.length; i++) {
+    if (wheel[i].length == 0) {
+      wheel[i] = '?'
+    }
+}
+
+while(output.length < n) {
+  if (cur_idx < 0) {
+    cur_idx += wheel.length
+  }
+  output.push(wheel[cur_idx]);
+  console.log(output)
+  cur_idx -= 1;
+}
+
+console.log(output.join(''))
