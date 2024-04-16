@@ -1,0 +1,58 @@
+const filePath = process.platform === 'linux' ? 'dev/stdin' : './input.txt';
+const input = require('fs').readFileSync(filePath).toString();
+
+class Node {
+    constructor(val) {
+        this.val = val;
+        this.next = null;
+    }
+}
+
+class Queue {
+    constructor() {
+        this.head = null;
+        this.tail = null;
+        this.length = 0
+    }
+
+    push(val) {
+        const node = new Node(val);
+        if(!this.head) {
+            this.head = node;
+            this.head.next = this.tail;
+        } else {
+            this.tail.next = node;
+        }
+        this.tail = node;
+        this.length++;
+        return node;
+    }
+    isHead() {
+        return this.head.val;
+    }
+
+    isRemove() {
+        this.head = this.head.next;
+        this.length--;
+    }
+
+    islength() {
+        return this.length;
+    }
+}
+const list = new Queue();
+
+for(let i = 1; i <= input; i++) {
+    list.push(i);
+}
+
+for(;;){
+    if(list.islength() <= 1) {
+        break;
+    }
+    list.isRemove();
+    list.push(list.isHead());
+    list.isRemove()
+}
+
+console.log(list.isHead());
