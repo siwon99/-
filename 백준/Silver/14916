@@ -1,0 +1,20 @@
+const filePath = process.platform == 'linux' ? '/dev/stdin' : './input.txt';
+let num = Number(require('fs').readFileSync(filePath).toString());
+let count = 0;
+
+while(true) {
+    if (num % 5 == 0) {
+        a = num / 5
+        count += a;
+        break;
+    }
+    num -= 2;
+    count++;
+
+    if(num < 0) {
+        count = -1;
+        break;
+    }
+}
+
+console.log(count)
