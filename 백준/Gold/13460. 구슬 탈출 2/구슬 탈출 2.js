@@ -1,104 +1,98 @@
 const fs = require("fs");
 const input = fs.readFileSync("./dev/stdin").toString().trim().split("\n");
-const [N, M] = input.shift().split(" ").map(Number);
 
-// 보드판
-const boards = input.map((v) => v.split(""));
-const R = {};
-const B = {};
-const O = {};
+const solution = (input) => {
+  let [n, m] = input.shift().split(' ').map(Number);
+  let inputParted = input.map(v => v.split(''));
+  let red = [];
+  let blue = [];
+  let o = [];
+  let ans = -1;
 
-// 초기 R, B, O 위치 찾기
-for (let i = 0; i < N; i++) {
-  for (let j = 0; j < M; j++) {
-    if (boards[i][j] === 'R') {
-      R.x = i;
-      R.y = j;
-      boards[i][j] = ".";
-    }
-    if (boards[i][j] === 'B') {
-      B.x = i;
-      B.y = j;
-      boards[i][j] = ".";
-    }
-    if (boards[i][j] === 'O') {
-      O.x = i;
-      O.y = j;
+  // R, B, O의 초기 좌표 확인
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < m; j++) {
+      if (inputParted[i][j] === 'R') {
+        red = [i, j];
+        inputParted[i][j] = '.'; // 초기 좌표를 확인한 후 '.'으로 변경
+      }
+      if (inputParted[i][j] === 'B') {
+        blue = [i, j];
+        inputParted[i][j] = '.'; // 초기 좌표를 확인한 후 '.'으로 변경
+      }
+      if (inputParted[i][j] === 'O') {
+        o = [i, j]; // 구멍의 좌표 저장
+      }
     }
   }
-}
 
-// 상하좌우
-const dx = [-1, 1, 0, 0];
-const dy = [0, 0, -1, 1];
+  let dirX = [0, 1, 0, -1];
+  let dirY = [1, 0, -1, 0];
+  const queue = [[...red, ...blue, 0]];
+  const visited = new Set();
+  visited.add(`${red[0]},${red[1]},${blue[0]},${blue[1]}`); // 초기 상태를 방문 처리
 
-const queue = [];
-queue.push({ R, B, count: 0 });
-let visited = new Set();
-visited.add(`${R.x},${R.y},${B.x},${B.y}`);
+  while (queue.length && ans === -1) {
+    const [rx, ry, bx, by, cnt] = queue.shift();
 
-let answer = -1;
+    // 최대 10번 시도
+    if (cnt >= 10) break;
 
-// BFS 최단 경로
-while (queue.length > 0 && answer === -1) {
-  const { R, B, count } = queue.shift();
+    for (let j = 0; j < 4; j++) {
+      let newRx = rx, newRy = ry;
+      let newBx = bx, newBy = by;
 
-  if (count >= 10) break;
+      let rHole = false, bHole = false;
 
-  for (let i = 0; i < 4; i++) {
-    let nrx = R.x;
-    let nry = R.y;
-    let nbx = B.x;
-    let nby = B.y;
+      // 빨간 구슬 이동
+      while (inputParted[newRx + dirX[j]][newRy + dirY[j]] !== '#') {
+        newRx += dirX[j];
+        newRy += dirY[j];
+        if (newRx === o[0] && newRy === o[1]) {
+          rHole = true; 
+          break;
+        }
+      }
 
-    let rInHole = false;
-    let bInHole = false;
+      // 파란 구슬 이동
+      while (inputParted[newBx + dirX[j]][newBy + dirY[j]] !== '#') {
+        newBx += dirX[j];
+        newBy += dirY[j];
+        if (newBx === o[0] && newBy === o[1]) {
+          bHole = true;
+          break;
+        }
+      }
 
-    // 빨간 구슬 이동
-    while (boards[nrx + dx[i]][nry + dy[i]] !== "#" && !(nrx === O.x && nry === O.y)) {
-      nrx += dx[i];
-      nry += dy[i];
-      if (nrx === O.x && nry === O.y) {
-        rInHole = true;
+      // 파란 구슬이 구멍에 빠졌다면 실패 (이 방향은 무시)
+      if (bHole) continue;
+
+      // 빨간 구슬만 구멍에 빠졌다면 정답
+      if (rHole) {
+        ans = cnt + 1;
         break;
       }
-    }
 
-    // 파란 구슬 이동
-    while (boards[nbx + dx[i]][nby + dy[i]] !== "#" && !(nbx === O.x && nby === O.y)) {
-      nbx += dx[i];
-      nby += dy[i];
-      if (nbx === O.x && nby === O.y) {
-        bInHole = true;
-        break;
+      // 두 구슬이 겹쳤을 경우 처리
+      if (newRx === newBx && newRy === newBy) {
+        if (Math.abs(newRx - rx) + Math.abs(newRy - ry) > Math.abs(newBx - bx) + Math.abs(newBy - by)) {
+          newRx -= dirX[j]; 
+          newRy -= dirY[j];
+        } else {
+          newBx -= dirX[j]; 
+          newBy -= dirY[j];
+        }
       }
-    }
 
-    // 파란 구슬이 구멍에 빠졌다면 무시
-    if (bInHole) continue;
-
-    // 빨간 구슬만 구멍에 빠졌다면 종료
-    if (rInHole) {
-      answer = count + 1;
-      break;
-    }
-
-    // 두 구슬의 위치가 겹친다면, 더 많이 움직인 구슬을 뒤로 한 칸 이동
-    if (nrx === nbx && nry === nby) {
-      if (Math.abs(nrx - R.x) + Math.abs(nry - R.y) > Math.abs(nbx - B.x) + Math.abs(nby - B.y)) {
-        nrx -= dx[i];
-        nry -= dy[i];
-      } else {
-        nbx -= dx[i];
-        nby -= dy[i];
+      const key = `${newRx},${newRy},${newBx},${newBy}`;
+      if (!visited.has(key)) {
+        visited.add(key);
+        queue.push([newRx, newRy, newBx, newBy, cnt + 1]);
       }
-    }
-
-    if (!visited.has(`${nrx},${nry},${nbx},${nby}`)) {
-      visited.add(`${nrx},${nry},${nbx},${nby}`);
-      queue.push({ R: { x: nrx, y: nry }, B: { x: nbx, y: nby }, count: count + 1 });
     }
   }
-}
 
-console.log(answer);
+  return ans;
+};
+
+console.log(solution(input));
