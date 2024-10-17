@@ -1,24 +1,34 @@
+const fs = require('fs');
 const filePath = process.platform === 'linux' ? '/dev/stdin' : './Javascript/input.txt';
-const input = require('fs').readFileSync(filePath).toString().trim().split('\n');
-const S = input[0];
+const input = fs.readFileSync(filePath).toString().trim();
 
-let cntZero = 0;
-let cntOne = 0;
-let answer = [];
+let num0 = 0;
+let num1 = 0;
+let sb = [...input]; 
 
-for(let i = 0; i < S.length; i++) {
-  if(S[i] === '0') cntZero += 1;
-  else cntOne += 1;
+for (const c of sb) {
+  if (c === '0') num0++;
+  else num1++;
 }
 
-cntZero = Math.floor(cntZero / 2);
-cntOne = Math.floor(cntOne / 2);
+num0 = Math.floor(num0 / 2);
+num1 = Math.floor(num1 / 2);
 
-for(let i = 0; i < cntZero; i++) {
-  answer.push('0');
-}
-for(let i = 0; i < cntOne; i++) {
-  answer.push('1');
+for (let i = 0; i < sb.length; i++) {
+  if (sb[i] === '1') {
+    sb[i] = '2'; 
+    num1--;
+  }
+  if (num1 === 0) break;
 }
 
-console.log(answer.join(''));
+for (let i = sb.length - 1; i >= 0; i--) {
+  if (sb[i] === '0') {
+    sb[i] = '2'; 
+    num0--;
+  }
+  if (num0 === 0) break;
+}
+
+const result = sb.filter((c) => c === '0' || c === '1').join('');
+console.log(result);
